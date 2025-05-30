@@ -705,5 +705,5 @@ app.get('/admin/analytics', authenticateToken, requireRole(['admin']), async (re
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Hello Server running on port ${PORT}`);
 });
