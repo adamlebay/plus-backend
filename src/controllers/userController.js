@@ -1,5 +1,20 @@
 const prisma = require('../config/prisma'); // Adjust path if needed
 
+const getUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 // Get user profile
 const getUserProfile = async (req, res) => {
     try {
@@ -34,23 +49,8 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
-const getUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-        });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
 module.exports = {
+  getUser,
   getUserProfile,
   updateUserProfile,
-  getUser,
 };
