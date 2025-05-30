@@ -1,19 +1,12 @@
-// Remove these lines:
-// const express = require('express');
-// const { createEvent, getAllEvents, updateEvent, getEventById } = require('../controllers/eventController');
-// const { verifyToken } = require('../middleware/authMiddleware');
-// const router = express.Router();
-// router.post('/', verifyToken, createEvent);
-// router.get('/', getAllEvents);
-// router.get('/:id', getEventById);
-// router.put('/:id', verifyToken, updateEvent);
+const prisma = require('../config/prisma'); // Add this line
 
-// Handler functions
+console.log('eventController loaded');
+
 exports.createEvent = async (req, res) => {
     const { title, description, location, date, available_slots } = req.body;
 
     try {
-        const newEvent = await Event.create({
+        const newEvent = await prisma.event.create({
             data: {
                 title,
                 description,
@@ -30,7 +23,7 @@ exports.createEvent = async (req, res) => {
 
 exports.getAllEvents = async (req, res) => {
     try {
-        const events = await Event.findMany();
+        const events = await prisma.event.findMany();
         res.status(200).json(events);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve events' });
@@ -42,7 +35,7 @@ exports.updateEvent = async (req, res) => {
     const { title, description, location, date, available_slots } = req.body;
 
     try {
-        const updatedEvent = await Event.update({
+        const updatedEvent = await prisma.event.update({
             where: { id },
             data: {
                 title,
@@ -62,7 +55,7 @@ exports.getEventById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const event = await Event.findUnique({
+        const event = await prisma.event.findUnique({
             where: { id }
         });
         if (!event) {

@@ -13,17 +13,28 @@ console.log({
   getEventByIdType: typeof getEventById,
 });
 
-
 // Route to create a new event
-router.post('/', verifyToken, createEvent);
+router.post('/', verifyToken, (req, res, next) => {
+  console.log('POST /events hit');
+  createEvent(req, res, next);
+});
 
 // Route to get all events
-router.get('/', getAllEvents);
+router.get('/', (req, res, next) => {
+  console.log('GET /events hit');
+  getAllEvents(req, res, next);
+});
 
 // Route to get an event by ID
-router.get('/:id', getEventById);
+router.get('/:id', (req, res, next) => {
+  console.log('GET /events/:id hit', req.params);
+  getEventById(req, res, next);
+});
 
 // Route to update an existing event
-router.put('/:id', verifyToken, updateEvent);
+router.put('/:id', verifyToken, (req, res, next) => {
+  console.log('PUT /events/:id hit', req.params);
+  updateEvent(req, res, next);
+});
 
 module.exports = router;
