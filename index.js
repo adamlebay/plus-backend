@@ -3,6 +3,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const jwt = require('jsonwebtoken');
+const eventRoutes = require('./src/routes/eventRoutes');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -11,6 +12,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANO
 const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(express.json());
+app.use('/events', eventRoutes);
 
 app.get('/', (req, res) => {
   res.send('PLUS backend is running!');
@@ -91,82 +93,6 @@ app.delete('/associations/:id', async (req, res) => {
     const { id } = req.params;
     await prisma.association.delete({ where: { id } });
     res.json({ message: 'Association deleted' });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Create a new event (allow impact_type)
-app.post('/events', async (req, res) => {
-  try {
-    const { title, description, location, association_id, date, available_slots, impact_type } = req.body;
-    const event = await prisma.event.create({
-      data: {
-        title,
-        description,
-        location,
-        association_id,
-        date: date ? new Date(date) : undefined,
-        available_slots,
-        impact_type,
-      },
-    });
-    res.status(201).json(event);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Get all events with filtering (including impact_type)
-app.get('/events', async (req, res) => {
-  try {
-    const { location, date, available_slots, impact_type } = req.query;
-    const filters = {};
-
-    if (location) filters.location = location;
-    if (date) filters.date = new Date(date);
-    if (available_slots) filters.available_slots = { gte: parseInt(available_slots) };
-    if (impact_type) filters.impact_type = impact_type;
-
-    const events = await prisma.event.findMany({
-      where: filters,
-      include: { association: true }
-    });
-    res.json(events);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update an event (allow impact_type)
-app.put('/events/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, description, location, association_id, date, available_slots, impact_type } = req.body;
-    const updated = await prisma.event.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        location,
-        association_id,
-        date: date ? new Date(date) : undefined,
-        available_slots,
-        impact_type,
-      },
-    });
-    res.json(updated);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Delete an event
-app.delete('/events/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await prisma.event.delete({ where: { id } });
-    res.json({ message: 'Event deleted' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -700,9 +626,6 @@ app.get('/badges', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// Subscribe to new messages for an event
-
 
 // Subscribe to new notifications for the current user
 
