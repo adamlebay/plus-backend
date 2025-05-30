@@ -7,7 +7,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-exports.signup = async (req, res) => {
+const signup = async (req, res) => {
     const { email, password, name } = req.body;
 
     try {
@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
     }
 };
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.logout = async (req, res) => {
+const logout = async (req, res) => {
     try {
         await supabase.auth.signOut();
         res.status(200).json({ message: 'Logout successful' });
@@ -55,5 +55,8 @@ exports.logout = async (req, res) => {
     }
 };
 
-const something = require('...');
-module.exports = something;
+module.exports = {
+    signup,
+    login,
+    logout
+};

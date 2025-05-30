@@ -1,6 +1,6 @@
-import express from 'express';
-import { createEvent, getEvents, updateEvent } from '../controllers/eventController.js';
-import { verifyToken } from '../middleware/authMiddleware.js';
+const express = require('express');
+const { createEvent, getEvents, updateEvent } = require('../controllers/eventController');
+const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.get('/', getEvents);
 // Route to update an existing event
 router.put('/:id', verifyToken, updateEvent);
 
-export default router;
+module.exports = router;
