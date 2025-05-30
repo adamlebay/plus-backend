@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('../config/db');
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.signup = async (req, res) => {
