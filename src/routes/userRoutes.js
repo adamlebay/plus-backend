@@ -1,13 +1,16 @@
 const express = require('express');
-const { getUserProfile, updateUserProfile } = require('../controllers/userController');
+const { getUser, getUserProfile, updateUserProfile } = require('../controllers/userController');
 const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Route to get user profile
-router.get('/profile', verifyToken, getUserProfile);
+// Route to get a user by ID
+router.get('/:id', getUser);
 
-// Route to update user profile
-router.put('/profile', verifyToken, updateUserProfile);
+// Route to get the logged-in user's profile
+router.get('/me', verifyToken, getUserProfile);
+
+// Route to update the logged-in user's profile
+router.put('/me', verifyToken, updateUserProfile);
 
 module.exports = router;
