@@ -1,6 +1,14 @@
-const Event = require('../models/eventModel');
+// Remove these lines:
+// const express = require('express');
+// const { createEvent, getAllEvents, updateEvent, getEventById } = require('../controllers/eventController');
+// const { verifyToken } = require('../middleware/authMiddleware');
+// const router = express.Router();
+// router.post('/', verifyToken, createEvent);
+// router.get('/', getAllEvents);
+// router.get('/:id', getEventById);
+// router.put('/:id', verifyToken, updateEvent);
 
-// Create a new volunteering event
+// Handler functions
 exports.createEvent = async (req, res) => {
     const { title, description, location, date, available_slots } = req.body;
 
@@ -20,7 +28,6 @@ exports.createEvent = async (req, res) => {
     }
 };
 
-// Get all volunteering events
 exports.getAllEvents = async (req, res) => {
     try {
         const events = await Event.findMany();
@@ -30,7 +37,6 @@ exports.getAllEvents = async (req, res) => {
     }
 };
 
-// Update an existing volunteering event
 exports.updateEvent = async (req, res) => {
     const { id } = req.params;
     const { title, description, location, date, available_slots } = req.body;
@@ -52,7 +58,6 @@ exports.updateEvent = async (req, res) => {
     }
 };
 
-// Get a single volunteering event by ID
 exports.getEventById = async (req, res) => {
     const { id } = req.params;
 
