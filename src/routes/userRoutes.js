@@ -4,6 +4,8 @@ const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+console.log({ getUser, getUserProfile, updateUserProfile });
+
 // Route to get the logged-in user's profile
 router.get('/me', verifyToken, getUserProfile);
 
