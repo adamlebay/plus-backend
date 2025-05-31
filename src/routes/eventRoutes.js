@@ -7,10 +7,13 @@ const router = express.Router();
 
 console.log('eventRoutes loaded');
 console.log({
-  createEventType: typeof createEvent,
-  getAllEventsType: typeof getAllEvents,
-  updateEventType: typeof updateEvent,
-  getEventByIdType: typeof getEventById,
+  createEvent,
+  getAllEvents,
+  updateEvent,
+  getEventById,
+  joinEvent,
+  leaveEvent,
+  approveParticipation
 });
 
 // Route to create a new event
@@ -53,10 +56,6 @@ router.post('/:id/leave', verifyToken, (req, res, next) => {
 router.post('/:eventId/approve/:userId', verifyToken, requireAdmin, approveParticipation);
 
 // After decoding JWT
-req.user = {
-  id: decoded.id,
-  email: decoded.email,
-  role: decoded.role // <-- must be present for admin check
-};
+
 
 module.exports = router;
