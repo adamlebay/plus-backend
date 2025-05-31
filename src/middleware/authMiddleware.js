@@ -1,23 +1,18 @@
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+const JWT_SECRET = process.env.JWT_SECRET;
 
-dotenv.config();
+exports.verifyToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
 
-const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(403).json({ message: 'Failed to authenticate token' });
-        }
-
-        req.user = { id: decoded.id };
-        next();
-    });
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    req.user = {
+      id: decoded.userId || decoded.id,
+      email: decoded.email,
+      role: decoded.role // <-- must be present for admin check
+    };
+    next();
+  });
 };
-
-module.exports = { verifyToken };

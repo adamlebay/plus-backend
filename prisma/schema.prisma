@@ -8,48 +8,50 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(uuid())
+  id                String          @id @default(uuid())
   name              String
-  email             String    @unique
-  plus_credits      Int       @default(0)
-  created_at        DateTime  @default(now())
-  role              String    @default("volunteer") // "volunteer", "admin", "association"
-  profileVisibility String    @default("public") // "public" or "private"
-  events            Event[]   @relation("UserEvents")
+  email             String          @unique
+  plus_credits      Int             @default(0)
+  created_at        DateTime        @default(now())
+  role              String          @default("volunteer") // "volunteer", "admin", "association"
+  profileVisibility String          @default("public") // "public" or "private"
+  events            Event[]         @relation("UserEvents")
   activities        Activity[]
   comments          Comment[]
   reactions         Reaction[]
-  waitlistedEvents  Event[]   @relation("EventWaitlist")
-  messages           Message[]  @relation("UserMessages")
+  waitlistedEvents  Event[]         @relation("EventWaitlist")
+  messages          Message[]       @relation("UserMessages")
   notifications     Notification[]
-  givenRatings      Rating[]   @relation("Reviewer")
-  receivedRatings   Rating[]   @relation("Reviewee")
+  givenRatings      Rating[]        @relation("Reviewer")
+  receivedRatings   Rating[]        @relation("Reviewee")
   userBadges        UserBadge[]
   attendances       Attendance[]
+  participations    Participation[] // <--- add this line
 }
 
 model Association {
-  id    String  @id @default(uuid())
-  name  String
+  id     String  @id @default(uuid())
+  name   String
   events Event[]
 }
 
 model Event {
-  id             String      @id @default(uuid())
-  title          String
-  description    String?
-  location       String?
-  association_id String
-  date           DateTime?
-  available_slots Int        @default(0)
-  impact_type    String?
-  association    Association @relation(fields: [association_id], references: [id])
-  users          User[]      @relation("UserEvents")
-  activities     Activity[]
-  waitlist       User[]      @relation("EventWaitlist")
-  messages       Message[]   @relation("EventMessages")
-  ratings        Rating[]    // <-- Add this line
-  attendances    Attendance[]
+  id              String          @id @default(uuid())
+  title           String
+  description     String?
+  location        String?
+  association_id  String
+  date            DateTime?
+  available_slots Int             @default(0)
+  impact_type     String?
+  association     Association     @relation(fields: [association_id], references: [id])
+  users           User[]          @relation("UserEvents")
+  activities      Activity[]
+  waitlist        User[]          @relation("EventWaitlist")
+  messages        Message[]       @relation("EventMessages")
+  ratings         Rating[] // <-- Add this line
+  attendances     Attendance[]
+  participations  Participation[] // <--- add this line
 }
 
 model Comment {
@@ -64,7 +66,7 @@ model Comment {
 
 model Reaction {
   id         String   @id @default(uuid())
-  type       String   // e.g. "like", "love", "clap"
+  type       String // e.g. "like", "love", "clap"
   userId     String
   activityId String
   user       User     @relation(fields: [userId], references: [id])
@@ -72,13 +74,13 @@ model Reaction {
 }
 
 model Activity {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   userId    String
   eventId   String?
   content   String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  event     Event?   @relation(fields: [eventId], references: [id])
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id])
+  event     Event?     @relation(fields: [eventId], references: [id])
   comments  Comment[]
   reactions Reaction[]
 }
@@ -103,16 +105,16 @@ model Notification {
 }
 
 model Rating {
-  id          String   @id @default(uuid())
-  stars       Int      // 1 to 5
-  comment     String?
-  reviewerId  String   // The user giving the rating
-  revieweeId  String   // The user receiving the rating (can be an organizer or volunteer)
-  eventId     String   // The event context for the rating
-  createdAt   DateTime @default(now())
-  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
-  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id])
-  event       Event    @relation(fields: [eventId], references: [id])
+  id         String   @id @default(uuid())
+  stars      Int // 1 to 5
+  comment    String?
+  reviewerId String // The user giving the rating
+  revieweeId String // The user receiving the rating (can be an organizer or volunteer)
+  eventId    String // The event context for the rating
+  createdAt  DateTime @default(now())
+  reviewer   User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewee   User     @relation("Reviewee", fields: [revieweeId], references: [id])
+  event      Event    @relation(fields: [eventId], references: [id])
 }
 
 model Badge {
@@ -134,15 +136,23 @@ model UserBadge {
 }
 
 model Attendance {
-  id        String   @id @default(uuid())
-  userId    String
-  eventId   String
-  checkedIn Boolean  @default(false)
+  id          String    @id @default(uuid())
+  userId      String
+  eventId     String
+  checkedIn   Boolean   @default(false)
   checkedInAt DateTime?
-  user      User     @relation(fields: [userId], references: [id])
-  event     Event    @relation(fields: [eventId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  event       Event     @relation(fields: [eventId], references: [id])
 }
 
+model Participation {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+  status    String   @default("pending") // "pending", "approved", "rejected"
+  createdAt DateTime @default(now())
 
-
-
+  @@unique([userId, eventId])
+}

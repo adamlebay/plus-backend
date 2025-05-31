@@ -1,6 +1,6 @@
 const express = require('express');
-const { createEvent, getAllEvents, updateEvent, getEventById } = require('../controllers/eventController');
-const { verifyToken } = require('../middleware/authMiddleware');
+const { createEvent, getAllEvents, updateEvent, getEventById, joinEvent, leaveEvent, approveParticipation } = require('../controllers/eventController');
+const { verifyToken, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -36,5 +36,27 @@ router.put('/:id', verifyToken, (req, res, next) => {
   console.log('PUT /events/:id hit', req.params);
   updateEvent(req, res, next);
 });
+
+// Join event
+router.post('/:id/join', verifyToken, (req, res, next) => {
+  console.log('POST /events/:id/join hit', req.params);
+  joinEvent(req, res, next);
+});
+
+// Leave event
+router.post('/:id/leave', verifyToken, (req, res, next) => {
+  console.log('POST /events/:id/leave hit', req.params);
+  leaveEvent(req, res, next);
+});
+
+// Approve participation
+router.post('/:eventId/approve/:userId', verifyToken, requireAdmin, approveParticipation);
+
+// After decoding JWT
+req.user = {
+  id: decoded.id,
+  email: decoded.email,
+  role: decoded.role // <-- must be present for admin check
+};
 
 module.exports = router;
