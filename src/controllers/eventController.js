@@ -17,6 +17,7 @@ exports.createEvent = async (req, res) => {
         });
         res.status(201).json(newEvent);
     } catch (error) {
+        console.error('Failed to create event:', error);
         res.status(500).json({ error: 'Failed to create event' });
     }
 };
