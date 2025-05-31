@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma'); // Add this line
+const { createEvent, getAllEvents, updateEvent, getEventById, joinEvent, leaveEvent, approveParticipation } = require('../controllers/eventController');
 
 console.log('eventController loaded');
 
@@ -129,7 +130,6 @@ exports.approveParticipation = async (req, res) => {
             where: { eventId, userId, status: 'pending' },
             data: { status: 'approved' }
         });
-        // Optionally, award credits here if needed
         res.status(200).json({ message: 'Participation approved', participation });
     } catch (error) {
         console.error('Failed to approve participation:', error);

@@ -16,6 +16,8 @@ console.log({
   approveParticipation
 });
 
+console.log(typeof approveParticipation)
+
 // Route to create a new event
 router.post('/', verifyToken, (req, res, next) => {
   console.log('POST /events hit');
