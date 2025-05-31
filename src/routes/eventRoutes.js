@@ -16,7 +16,7 @@ console.log({
   approveParticipation
 });
 
-console.log(typeof approveParticipation)
+console.log('approveParticipation type:', typeof approveParticipation)
 
 // Route to create a new event
 router.post('/', verifyToken, (req, res, next) => {
